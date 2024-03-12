@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 // const card1 = [
@@ -37,12 +37,33 @@ export const ActivityScreen = () => {
     { id: 6, value: "FISH" },
   ]);
 
+  const [open, setOpen] = useState(false);
+  const [context, setContext] = useState("");
   const [card1Active, setcard1Active] = useState(null);
   const [card2Active, setcard2Active] = useState(null);
-  const SuffleCard = () => {
-    setcard1([...card1].sort(() => Math.random() - 0.6));
-    setcard2([...card2].sort(() => Math.random() - 0.6));
-  };
+
+  useEffect(() => {
+    if (card1Active != null && card2Active != null) {
+      if (card1Active === card2Active) {
+        setOpen(true);
+        setContext("Correct");
+      } else {
+        setOpen(true);
+        setContext("Wrong");
+      }
+
+      const timeout = setTimeout(() => {
+        setcard1([...card1].sort(() => Math.random() - 0.5));
+        setcard2([...card2].sort(() => Math.random() - 0.5));
+        setOpen(false);
+        setContext("");
+        setcard1Active(null);
+        setcard2Active(null);
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [card1Active, card2Active]);
   return (
     <>
       <p>ActivityScreen</p>
@@ -97,12 +118,8 @@ export const ActivityScreen = () => {
           </div>
         </div>
       </div>
+      <p>{context}</p>
 
-      <button
-        onClick={() => SuffleCard()}
-        className="inline-flex items-center justify-center h-10 gap-2 px-5 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-emerald-300 disabled:bg-emerald-300 disabled:shadow-none">
-        Suffle
-      </button>
       <Link
         to={"/reward"}
         className="inline-flex items-center justify-center h-10 gap-2 px-5 text-sm font-medium tracking-wide text-white transition duration-300 rounded whitespace-nowrap bg-emerald-500 hover:bg-emerald-600 focus:bg-emerald-700 focus-visible:outline-none disabled:cursor-not-allowed disabled:border-emerald-300 disabled:bg-emerald-300 disabled:shadow-none">
